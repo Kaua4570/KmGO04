@@ -1,14 +1,14 @@
-const CACHE = "km-app-v2";
+const CACHE = "app-v2";
 
 self.addEventListener("install", e => {
   e.waitUntil(
     caches.open(CACHE).then(cache => {
       return cache.addAll([
         "./",
-        "index.html",
-        "manifest.json",
-        "icon-192.png",
-        "fundo.png"
+        "./index.html",
+        "./manifest.json",
+        "./icon-192.png",
+        "./fundo.png"
       ]);
     })
   );
@@ -16,6 +16,6 @@ self.addEventListener("install", e => {
 
 self.addEventListener("fetch", e => {
   e.respondWith(
-    caches.match(e.request).then(res => res || fetch(e.request))
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });
