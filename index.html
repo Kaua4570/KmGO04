@@ -6,9 +6,10 @@
 
 <title>Painel ADM</title>
 
-<!-- PWA -->
+<!-- 🔥 PWA (APP) -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#25D366">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="icon-192.png">
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,20 +18,16 @@
 body {
   font-family: Arial;
   margin: 0;
+  background: #111;
   color: white;
   display: flex;
   justify-content: center;
-
-  /* 🔥 FUNDO */
-  background: url("fundo.png") no-repeat center center fixed;
-  background-size: cover;
 }
 
 .container {
   width: 100%;
   max-width: 420px;
   padding: 20px;
-  backdrop-filter: blur(6px);
 }
 
 h1 {
@@ -40,16 +37,15 @@ h1 {
 select {
   width: 100%;
   padding: 14px;
-  border-radius: 12px;
+  border-radius: 10px;
   margin-bottom: 15px;
   border: none;
-  font-size: 16px;
 }
 
 .card {
-  background: rgba(0,0,0,0.8);
+  background: #1c1c1c;
   padding: 15px;
-  border-radius: 15px;
+  border-radius: 12px;
   margin-bottom: 15px;
 }
 
@@ -58,11 +54,12 @@ ul {
 }
 
 canvas {
-  background: #111;
+  background: #fff;
   border-radius: 10px;
   padding: 10px;
 }
 </style>
+
 </head>
 
 <body>
@@ -71,7 +68,7 @@ canvas {
 
 <h1>Painel ADM</h1>
 
-<select id="placaSelect" onchange="selecionarPlaca()">
+<select id="placaSelect">
   <option value="">Selecione a placa</option>
 </select>
 
@@ -96,17 +93,13 @@ canvas {
 
 <script src="script.js"></script>
 
-<!-- 🔥 SERVICE WORKER -->
+<!-- 🔥 ATIVA O APP -->
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js")
-    .then(() => console.log("SW ativo"))
-    .catch(err => console.log("Erro SW:", err));
+    .then(() => console.log("App instalado"))
+    .catch(err => console.log("Erro:", err));
 }
-</script>
-
-</body>
-</html>}
 </script>
 
 </body>
