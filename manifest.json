@@ -1,0 +1,16 @@
+{
+  "name": "Relatório KM",
+  "short_name": "KM",
+  "start_url": "./index.html?nocache=1",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#25D366",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

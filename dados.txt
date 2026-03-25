@@ -1,0 +1,31 @@
+# MOTORISTAS
+713=kauã Campos
+871=Márcio
+122=Marcos Vinicius
+634=Maurício Resende
+537=Edmar Lopes
+366=Thalysson jansen
+944=Solange Tavares
+537=Laila Oliveira
+984=Jhony C Brito
+365=Ednei Jr
+
+# VEICULOS
+UFG1I38|Fiorino
+UGT4A60|Fiorino
+QSZ9I88|Fiorino
+SWU9J57|Fiorino
+TLK9H18|Fiorino
+STI1C79|van Disel
+STT3B07|Van Disel
+SGL2D39|Van Disel
+GHK1J44|Van Disel
+
+SDQ2A25|Eletrico
+SDQ2A26|Eletrico
+SDQ2A29|Eletrico
+SDQ2A30|Eletrico
+SDP9J13|Eletrico
+SDP9J14|Eletrico
+SDP9J15|Eletrico
+SDP9J16|Eletrico
