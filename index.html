@@ -6,63 +6,128 @@
 
 <title>Relatório KM</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#25D366">
+<meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   margin: 0;
+  background: radial-gradient(circle at top, #1a1a1a, #000);
   display: flex;
   justify-content: center;
-  background: #111111;
+  align-items: center;
+  min-height: 100vh;
 }
 
-.compacto {
-  padding: 6px !important;
-  height: 38px;
-  font-size: 14px;
-}
-
+/* CARD */
 .container {
-  width: 100%;
+  width: 95%;
   max-width: 420px;
   padding: 20px;
-  background: #222;
-  border-radius: 15px;
+  border-radius: 20px;
+  background: rgba(20,20,20,0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 40px rgba(255,0,60,0.25);
   color: white;
 }
 
+/* LOGO */
+.logo {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logo img {
+  width: 160px;
+  border-radius: 10px;
+}
+
+/* TÍTULO */
+h2 {
+  text-align: center;
+  margin: 10px 0 5px;
+}
+
+.sub {
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+/* LABEL */
+label {
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* INPUTS */
 input, select {
   width: 100%;
   padding: 14px;
   margin: 6px 0 15px;
-  border-radius: 8px;
-  border: none;
-}
-
-button {
-  width: 100%;
-  padding: 16px;
-  background: #25D366B5;
+  border-radius: 12px;
+  border: 1px solid #333;
+  background: rgba(0,0,0,0.6);
   color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
 }
 
+/* FOCO */
+input:focus, select:focus {
+  border: 1px solid #ff003c;
+  box-shadow: 0 0 10px #ff003c55;
+}
+
+/* MOTORISTA */
+.linha {
+  display: flex;
+  gap: 8px;
+}
+
+.linha input:first-child {
+  width: 80px;
+}
+
+/* BOTÕES KM */
 .top-buttons {
   display: flex;
   gap: 10px;
+  margin-bottom: 15px;
 }
 
 .top-buttons button {
-  background: #9B1A1ABD;
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #222;
+  color: #aaa;
 }
 
+/* ATIVO */
+.top-buttons button.active {
+  background: #ff003c;
+  color: white;
+  box-shadow: 0 0 10px #ff003c88;
+}
+
+/* BOTÃO ENVIAR */
+button.enviar {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #ff003c, #b3002a);
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+  box-shadow: 0 0 15px #ff003c88;
+}
+
+/* ESCONDIDO */
 .hidden {
   display: none;
 }
@@ -73,7 +138,12 @@ button {
 
 <div class="container">
 
-<h2>Relatório de Veículo</h2>
+<div class="logo">
+  <img src="logo.png">
+</div>
+
+<h2>Relatório KM</h2>
+<div class="sub">Murici Logística</div>
 
 <div class="top-buttons">
   <button onclick="selecionarTipo('inicial')">Km Inicial</button>
@@ -88,32 +158,25 @@ button {
 </select>
 
 <label>Tipo de veículo:</label>
-<input type="text" id="tipo" readonly class="compacto">
+<input type="text" id="tipo" readonly>
 
 <label>Motorista:</label>
-<div style="display:flex; gap:5px;">
-<input 
-  type="tel" 
-  id="codigo" 
-  placeholder="Cód" 
-  maxlength="3" 
-  inputmode="numeric" 
-  pattern="[0-9]*"
-  style="width:80px;">
-<input type="text" id="motorista" placeholder="Nome completo" style="flex:1;" readonly>
+<div class="linha">
+  <input type="tel" id="codigo" placeholder="Cód" maxlength="3">
+  <input type="text" id="motorista" placeholder="Nome completo" readonly>
 </div>
 
 <div id="campoInicial" class="hidden">
   <label>Km Inicial:</label>
-  <input type="number" id="kmInicial" class="compacto">
+  <input type="number" id="kmInicial">
 </div>
 
 <div id="campoFinal" class="hidden">
   <label>Km Final:</label>
-  <input type="number" id="kmFinal" class="compacto">
+  <input type="number" id="kmFinal">
 </div>
 
-<button onclick="enviar()">Enviar</button>
+<button class="enviar" onclick="enviar()">Enviar</button>
 
 </div>
 
@@ -156,30 +219,26 @@ fetch("dados.txt")
 
   });
 
-// AUTO PREENCHER MOTORISTA
+// AUTO PREENCHER
 document.getElementById("codigo").addEventListener("input", function() {
   let cod = this.value.trim();
-
   document.getElementById("motorista").value = listaCodigos[cod] || "";
 });
 
 // DATA
 window.onload = function() {
   let hoje = new Date();
-  let ano = hoje.getFullYear();
-  let mes = String(hoje.getMonth() + 1).padStart(2, '0');
-  let dia = String(hoje.getDate()).padStart(2, '0');
-
-  document.getElementById("data").value = `${ano}-${mes}-${dia}`;
+  document.getElementById("data").value =
+    hoje.getFullYear() + "-" +
+    String(hoje.getMonth()+1).padStart(2,'0') + "-" +
+    String(hoje.getDate()).padStart(2,'0');
 }
 
 // VEÍCULO
 function definirVeiculo() {
   let valor = document.getElementById("placa").value;
   if (!valor) return;
-
-  let partes = valor.split("|");
-  document.getElementById("tipo").value = partes[1];
+  document.getElementById("tipo").value = valor.split("|")[1];
 }
 
 // BOTÕES
@@ -189,10 +248,16 @@ function selecionarTipo(tipo) {
   document.getElementById("campoInicial").classList.add("hidden");
   document.getElementById("campoFinal").classList.add("hidden");
 
+  document.querySelectorAll(".top-buttons button").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
   if (tipo === "inicial") {
     document.getElementById("campoInicial").classList.remove("hidden");
+    document.querySelectorAll(".top-buttons button")[0].classList.add("active");
   } else {
     document.getElementById("campoFinal").classList.remove("hidden");
+    document.querySelectorAll(".top-buttons button")[1].classList.add("active");
   }
 }
 
