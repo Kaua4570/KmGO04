@@ -10,230 +10,169 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  color: white;
-  background: url('fundo.jpg') no-repeat center center fixed;
-  background-size: cover;
+  background: #000;
+  color: #fff;
 }
 
+/* FUNDO */
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
+  width: 100%;
+  height: 100%;
+  background: url('fundo.jpg') no-repeat center top;
+  background-size: cover;
+  opacity: 0.25;
+  z-index: -1;
 }
 
-/* LOGO */
-.topo {
-  text-align: center;
-  padding-top: 50px;
-  position: relative;
-  z-index: 2;
-}
-
-.topo img {
-  width: 120px;
+/* CONTAINER */
+.container {
+  padding: 20px;
 }
 
 /* CARD */
-.container {
-  width: 90%;
-  max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
+.card {
+  background: rgba(0,0,0,0.8);
   border-radius: 20px;
-
-  background: rgba(20,20,20,0.6);
-  backdrop-filter: blur(15px);
-
-  box-shadow: 0 0 25px rgba(255,0,60,0.2);
-  position: relative;
-  z-index: 2;
+  padding: 20px;
+  margin-top: 120px;
+  box-shadow: 0 0 20px rgba(255,0,0,0.3);
 }
 
-h2 {
+/* TITULO */
+h1 {
   text-align: center;
-}
-
-/* BOTÕES */
-.top-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.top-buttons button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #111;
-  color: #aaa;
-}
-
-.top-buttons button.active {
-  background: linear-gradient(135deg, #ff003c, #ff4d6d);
-  color: white;
 }
 
 /* INPUTS */
 input, select {
   width: 100%;
-  padding: 14px;
-  margin: 6px 0 15px;
+  padding: 15px;
+  margin-top: 10px;
   border-radius: 12px;
   border: 1px solid #333;
-  background: rgba(0,0,0,0.6);
-  color: white;
-}
-
-input:focus, select:focus {
-  border: 1px solid #ff003c;
-  box-shadow: 0 0 10px #ff003c88;
-}
-
-/* MOTORISTA */
-.linha {
-  display: flex;
-  gap: 8px;
-}
-
-.linha input:first-child {
-  width: 80px;
+  background: #000;
+  color: #fff;
 }
 
 /* BOTÃO */
-.enviar {
+button {
   width: 100%;
-  padding: 16px;
-  border-radius: 12px;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 15px;
   border: none;
-  background: linear-gradient(135deg, #ff003c, #b3002a);
-  color: white;
-  font-weight: bold;
-  font-size: 16px;
-  box-shadow: 0 0 20px #ff003caa;
+  background: linear-gradient(45deg, #ff003c, #ff1f5a);
+  color: #fff;
+  font-size: 18px;
 }
 
-.hidden {
-  display: none;
+/* GRID KM */
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row input {
+  width: 50%;
 }
 </style>
+
 </head>
 
 <body>
 
-
 <div class="container">
 
-<h2>Relatório de Veículo</h2>
+  <div class="card">
 
-<div class="top-buttons">
-  <button onclick="selecionarTipo('inicial')">Km Inicial</button>
-  <button onclick="selecionarTipo('final')">Km Final</button>
-</div>
+    <h1>Relatório de Veículo</h1>
 
-<label>Placa:</label>
-<select id="placa" onchange="definirVeiculo()">
-  <option>Carregando...</option>
-</select>
+    <div class="row">
+      <input type="number" id="kmInicial" placeholder="Km Inicial">
+      <input type="number" id="kmFinal" placeholder="Km Final">
+    </div>
 
-<label>Tipo de veículo:</label>
-<input type="text" id="tipo" readonly>
+    <label>Placa:</label>
+    <select id="placa"></select>
 
-<label>Motorista:</label>
-<div class="linha">
-  <input id="codigo" placeholder="Cód">
-  <input id="motorista" placeholder="Nome completo" readonly>
-</div>
+    <label>Tipo de veículo:</label>
+    <input type="text" id="tipo" readonly>
 
-<div id="campoInicial" class="hidden">
-  <label>Km Inicial:</label>
-  <input type="number" id="kmInicial">
-</div>
+    <label>Motorista:</label>
+    <div class="row">
+      <input type="text" id="cod" placeholder="Cód">
+      <input type="text" id="motorista" placeholder="Nome completo">
+    </div>
 
-<div id="campoFinal" class="hidden">
-  <label>Km Final:</label>
-  <input type="number" id="kmFinal">
-</div>
+    <button onclick="enviarFormulario()">Enviar</button>
 
-<button class="enviar" onclick="enviar()">Enviar</button>
+  </div>
 
 </div>
 
 <script>
-
-let tipoSelecionado = "";
-let listaCodigos = {};
-
-// 🔥 CARREGAR DADOS.TXT
+// CARREGAR DADOS
 fetch("dados.txt")
 .then(res => res.text())
 .then(texto => {
-
-  let linhas = texto.split("\n");
-  let select = document.getElementById("placa");
-
-  select.innerHTML = '<option value="">Selecione</option>';
+  const linhas = texto.split("\n");
+  const select = document.getElementById("placa");
 
   linhas.forEach(linha => {
-    linha = linha.trim();
-
-    if (!linha || linha.startsWith("#")) return;
-
-    if (linha.includes("=")) {
-      let [codigo, nome] = linha.split("=");
-      listaCodigos[codigo.trim()] = nome.trim();
-    }
-
     if (linha.includes("|")) {
-      let [placa, tipo] = linha.split("|");
+      const [placa, tipo] = linha.split("|");
 
-      let option = document.createElement("option");
-      option.value = placa.trim() + "|" + tipo.trim();
-      option.textContent = placa.trim() + " - " + tipo.trim();
+      const option = document.createElement("option");
+      option.value = placa;
+      option.textContent = placa + " - " + tipo;
+      option.dataset.tipo = tipo;
 
       select.appendChild(option);
     }
   });
+
+  select.addEventListener("change", () => {
+    const tipo = select.options[select.selectedIndex].dataset.tipo;
+    document.getElementById("tipo").value = tipo;
+  });
 });
 
-// AUTO MOTORISTA
-document.getElementById("codigo").addEventListener("input", function() {
-  let cod = this.value.trim();
-  document.getElementById("motorista").value = listaCodigos[cod] || "";
-});
+// BOTÃO ENVIAR (SEM ALERT 🚀)
+function enviarFormulario() {
+  const placa = document.getElementById("placa").value;
+  const tipo = document.getElementById("tipo").value;
+  const kmInicial = document.getElementById("kmInicial").value;
+  const kmFinal = document.getElementById("kmFinal").value;
+  const motorista = document.getElementById("motorista").value;
 
-// VEÍCULO
-function definirVeiculo() {
-  let valor = document.getElementById("placa").value;
-  if (!valor) return;
-
-  let partes = valor.split("|");
-  document.getElementById("tipo").value = partes[1];
-}
-
-// BOTÕES
-function selecionarTipo(tipo) {
-  tipoSelecionado = tipo;
-
-  document.querySelectorAll(".top-buttons button").forEach(b=>b.classList.remove("active"))
-
-  if (tipo === "inicial") {
-    document.querySelectorAll(".top-buttons button")[0].classList.add("active")
-    document.getElementById("campoInicial").classList.remove("hidden");
-    document.getElementById("campoFinal").classList.add("hidden");
-  } else {
-    document.querySelectorAll(".top-buttons button")[1].classList.add("active")
-    document.getElementById("campoFinal").classList.remove("hidden");
-    document.getElementById("campoInicial").classList.add("hidden");
+  if (!placa || !kmInicial) {
+    alert("Preencha os campos obrigatórios!");
+    return;
   }
-}
 
-// ENVIAR
-function enviar() {
-  alert("Funcionando 🚀");
-}
+  const dados = {
+    placa,
+    tipo,
+    kmInicial,
+    kmFinal,
+    motorista
+  };
 
+  console.log("Enviado:", dados);
+
+  // LIMPA FORM
+  document.querySelector("form")?.reset();
+
+  // FEEDBACK NO BOTÃO
+  const btn = document.querySelector("button");
+  btn.innerText = "Enviado ✔";
+
+  setTimeout(() => {
+    btn.innerText = "Enviar";
+  }, 2000);
+}
 </script>
 
 </body>
