@@ -10,147 +10,92 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  background: #0b0b0b;
   color: white;
-
-  /* FUNDO IGUAL MOCKUP */
-  background: url('fundo.jpg') no-repeat center center fixed;
-  background-size: cover;
 }
 
-/* ESCURECER FUNDO */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(2px);
-}
-
-/* LOGO TOPO */
+/* TOPO COM IMAGEM */
 .topo {
-  text-align: center;
-  padding-top: 60px;
+  height: 260px;
+  background: url('fundo.jpg') center/cover no-repeat;
   position: relative;
-  z-index: 2;
 }
 
-.topo img {
-  width: 140px;
+/* ESCURECER A IMAGEM */
+.topo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
 }
 
-/* CARD */
+/* CARD PRINCIPAL */
 .container {
-  width: 90%;
-  max-width: 400px;
-  margin: 20px auto;
+  margin: -80px 20px 20px;
   padding: 20px;
   border-radius: 20px;
-
-  /* GLASS EFFECT */
-  background: rgba(20,20,20,0.6);
-  backdrop-filter: blur(15px);
-
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    0 0 20px rgba(255,0,60,0.15),
-    inset 0 0 20px rgba(255,255,255,0.03);
-
-  position: relative;
-  z-index: 2;
+  background: rgba(20,20,20,0.95);
+  box-shadow: 0 0 25px rgba(255,0,60,0.2);
 }
 
 /* TÍTULO */
-h2 {
+h1 {
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-/* BOTÕES */
-.top-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.top-buttons button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #111;
-  color: #aaa;
-}
-
-.top-buttons button.active {
-  background: linear-gradient(135deg, #ff003c, #ff4d6d);
-  color: white;
-  box-shadow: 0 0 10px #ff003caa;
-}
-
-/* INPUTS */
+/* CAMPOS */
 input, select {
   width: 100%;
-  padding: 14px;
-  margin: 6px 0 15px;
+  padding: 15px;
+  margin-top: 8px;
+  margin-bottom: 15px;
   border-radius: 12px;
   border: 1px solid #333;
-  background: rgba(0,0,0,0.6);
+  background: #0f0f0f;
   color: white;
+  font-size: 14px;
 }
 
-/* FOCO */
-input:focus, select:focus {
-  border: 1px solid #ff003c;
-  box-shadow: 0 0 10px #ff003c88;
-}
-
-/* MOTORISTA */
-.linha {
+/* DOIS CAMPOS LADO A LADO */
+.row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
-.linha input:first-child {
-  width: 80px;
+.row input {
+  flex: 1;
 }
 
 /* BOTÃO */
-.enviar {
+button {
   width: 100%;
-  padding: 16px;
-  border-radius: 12px;
+  padding: 15px;
   border: none;
-
-  background: linear-gradient(135deg, #ff003c, #b3002a);
+  border-radius: 15px;
+  background: linear-gradient(90deg, #ff003c, #ff1a4d);
   color: white;
+  font-size: 18px;
   font-weight: bold;
-  font-size: 16px;
-
-  box-shadow:
-    0 0 20px #ff003caa,
-    0 5px 20px rgba(0,0,0,0.5);
-}
-
-/* ESCONDIDO */
-.hidden {
-  display: none;
+  box-shadow: 0 0 15px rgba(255,0,60,0.6);
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="topo">
-  <img src="logo.png">
-</div>
+<!-- TOPO COM IMAGEM -->
+<div class="topo"></div>
 
+<!-- FORMULÁRIO -->
 <div class="container">
 
-<h2>Relatório de Veículo</h2>
+<h1>Relatório de Veículo</h1>
 
-<div class="top-buttons">
-  <button onclick="selecionarTipo('inicial')">Km Inicial</button>
-  <button onclick="selecionarTipo('final')">Km Final</button>
+<div class="row">
+  <input type="number" placeholder="Km Inicial">
+  <input type="number" placeholder="Km Final">
 </div>
 
 <label>Placa:</label>
@@ -162,30 +107,17 @@ input:focus, select:focus {
 <input type="text">
 
 <label>Motorista:</label>
-<div class="linha">
-  <input placeholder="Cód">
-  <input placeholder="Nome completo">
+<div class="row">
+  <input type="text" placeholder="Cód">
+  <input type="text" placeholder="Nome completo">
 </div>
 
-<div id="campoInicial">
-  <label>Km Inicial:</label>
-  <input type="number">
-</div>
+<label>Km Inicial:</label>
+<input type="number">
 
-<button class="enviar">Enviar</button>
+<button>Enviar</button>
 
 </div>
-
-<script>
-function selecionarTipo(tipo){
-  document.querySelectorAll(".top-buttons button").forEach(b=>b.classList.remove("active"))
-  if(tipo==="inicial"){
-    document.querySelectorAll(".top-buttons button")[0].classList.add("active")
-  }else{
-    document.querySelectorAll(".top-buttons button")[1].classList.add("active")
-  }
-}
-</script>
 
 </body>
 </html>
