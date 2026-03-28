@@ -17,7 +17,6 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   color: white;
-
   background: url('fundo.jpg') no-repeat center center fixed;
   background-size: cover;
 }
@@ -31,16 +30,9 @@ body::before {
   backdrop-filter: blur(2px);
 }
 
-/* LOGO */
+/* ESPAÇO NO TOPO (SEM IMAGEM) */
 .topo {
-  text-align: center;
-  padding-top: 40px;
-  position: relative;
-  z-index: 2;
-}
-
-.topo img {
-  width: 120px;
+  height: 60px;
 }
 
 /* CARD */
@@ -48,7 +40,7 @@ body::before {
   width: 90%;
   max-width: 400px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 25px 10px;
   border-radius: 20px;
 
   background: rgba(20,20,20,0.6);
@@ -90,15 +82,16 @@ h2 {
   box-shadow: 0 0 10px #ff003caa;
 }
 
-/* INPUTS */
+/* INPUTS (ENCOLHIDOS) */
 input, select {
-  width: 100%;
+  width: 92%;
   padding: 14px;
-  margin: 6px 0 15px;
+  margin: 6px auto 15px;
   border-radius: 12px;
   border: 1px solid #333;
   background: rgba(0,0,0,0.6);
   color: white;
+  display: block;
 }
 
 input:focus, select:focus {
@@ -110,6 +103,8 @@ input:focus, select:focus {
 .linha {
   display: flex;
   gap: 8px;
+  width: 92%;
+  margin: auto;
 }
 
 .linha input:first-child {
@@ -118,7 +113,9 @@ input:focus, select:focus {
 
 /* BOTÃO */
 button.enviar {
-  width: 100%;
+  width: 92%;
+  margin: auto;
+  display: block;
   padding: 16px;
   border-radius: 12px;
   border: none;
@@ -137,9 +134,7 @@ button.enviar {
 
 <body>
 
-<div class="topo">
-  <img src="logo.png">
-</div>
+<div class="topo"></div>
 
 <div class="container">
 
@@ -262,7 +257,7 @@ function selecionarTipo(tipo) {
   }
 }
 
-// ENVIO (igual ao seu)
+// ENVIO
 function enviar() {
 
   let placaValor = document.getElementById("placa").value;
