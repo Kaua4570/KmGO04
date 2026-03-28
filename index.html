@@ -15,11 +15,24 @@
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  background: radial-gradient(circle at top, #1a1a1a, #000);
+
+  /* FUNDO COM IMAGEM */
+  background: url('fundo.jpg') no-repeat center center fixed;
+  background-size: cover;
+
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+}
+
+/* ESCURECER FUNDO */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: -1;
 }
 
 /* CARD */
@@ -28,9 +41,11 @@ body {
   max-width: 420px;
   padding: 20px;
   border-radius: 20px;
-  background: rgba(20,20,20,0.9);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 40px rgba(255,0,60,0.25);
+
+  background: rgba(20,20,20,0.75);
+  backdrop-filter: blur(8px);
+
+  box-shadow: 0 0 40px rgba(255,0,60,0.3);
   color: white;
 }
 
@@ -41,21 +56,13 @@ body {
 }
 
 .logo img {
-  width: 160px;
-  border-radius: 10px;
+  width: 120px;
 }
 
 /* TÍTULO */
 h2 {
   text-align: center;
-  margin: 10px 0 5px;
-}
-
-.sub {
-  text-align: center;
-  color: #aaa;
-  font-size: 13px;
-  margin-bottom: 15px;
+  margin: 15px 0;
 }
 
 /* LABEL */
@@ -143,7 +150,6 @@ button.enviar {
 </div>
 
 <h2>Relatório KM</h2>
-<div class="sub">Murici Logística</div>
 
 <div class="top-buttons">
   <button onclick="selecionarTipo('inicial')">Km Inicial</button>
