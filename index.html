@@ -66,9 +66,6 @@ body::before {
   z-index: 2;
 }
 
-/* TÍTULO */
-h2 { text-align: center; }
-
 /* BOTÕES */
 .top-buttons {
   display: flex;
@@ -154,7 +151,6 @@ button.enviar {
   </div>
 </div>
 
-<!-- FORM -->
 <div class="container">
 
 <h2>Relatório de Veículo</h2>
@@ -213,27 +209,29 @@ fetch("dados.txt")
   let select = document.getElementById("placa");
 
   linhas.forEach(l => {
-    if (l.includes("=")) {
-      let [c,n] = l.split("=");
+
+    if(l.includes("=")){
+      let [c,n]=l.split("=");
       listaCodigos[c.trim()] = n.trim();
     }
 
-    if (l.includes("|")) {
-      let [placa,tipo] = l.split("|");
-      let opt = document.createElement("option");
-      opt.value = placa+"|"+tipo;
-      opt.textContent = placa+" - "+tipo;
+    if(l.includes("|")){
+      let [placa,tipo]=l.split("|");
+      let opt=document.createElement("option");
+      opt.value=placa+"|"+tipo;
+      opt.textContent=placa+" - "+tipo;
       select.appendChild(opt);
     }
+
   });
 });
 
-// auto motorista
+// motorista automático
 document.getElementById("codigo").addEventListener("input", function(){
   document.getElementById("motorista").value = listaCodigos[this.value] || "";
 });
 
-// botão ativo
+// seleção botão
 function selecionarTipo(tipo){
   tipoSelecionado = tipo;
 
@@ -253,7 +251,7 @@ function selecionarTipo(tipo){
 
 // definir veículo
 function definirVeiculo(){
-  let v = document.getElementById("placa").value;
+  let v=document.getElementById("placa").value;
   if(!v) return;
   document.getElementById("tipo").value = v.split("|")[1];
 }
@@ -275,10 +273,14 @@ function getQuinzena(d){
   return dia<=14 ? `01/${mes} até 14/${mes}/${ano}` : `15/${mes} até final/${ano}`;
 }
 
-// salvar ganho
+// salvar ganho (SÓ KM INICIAL)
 function salvarGanho(){
+
+  if(tipoSelecionado !== "inicial") return;
+
   let tipo=document.getElementById("tipo").value;
   let motorista=document.getElementById("motorista").value;
+
   if(!motorista) return;
 
   let dados=JSON.parse(localStorage.getItem("ganhos"))||[];
@@ -295,25 +297,53 @@ function salvarGanho(){
   localStorage.setItem("ganhos",JSON.stringify(dados));
 }
 
+// abrir ganhos
+function abrirGanhos(){
+
+  document.getElementById("telaGanhos").classList.remove("hidden");
+
+  let nome=document.getElementById("motorista").value;
+  let dados=JSON.parse(localStorage.getItem("ganhos"))||[];
+
+  let total=0;
+  let html="";
+
+  if(dados.length===0){
+    html="<p>Nenhum ganho ainda</p>";
+  }
+
+  dados.forEach(d=>{
+    if(!nome || d.motorista===nome){
+      total+=d.valor;
+      html+=`
+      <div style="margin-bottom:10px;border-bottom:1px solid #333;">
+      📅 ${d.data}<br>🚚 ${d.tipo}<br>💰 R$ ${d.valor}<br>🗓 ${d.quinzena}</div>`;
+    }
+  });
+
+  document.getElementById("listaGanhos").innerHTML=html;
+  document.getElementById("totalGanhos").innerText="Total: R$ "+total;
+}
+
 // menu
 function toggleMenu(){
   document.getElementById("menuDropdown").classList.toggle("hidden");
 }
 
-// abrir ganhos
+function fecharGanhos(){
+  document.getElementById("telaGanhos").classList.add("hidden");
+}
+
+// WHATSAPP
 function enviar(){
 
-  let placa = document.getElementById("placa").value;
-  let tipo = document.getElementById("tipo").value;
-  let motorista = document.getElementById("motorista").value;
+  let placa=document.getElementById("placa").value;
+  let tipo=document.getElementById("tipo").value;
+  let motorista=document.getElementById("motorista").value;
 
-  let km = "";
-
-  if(tipoSelecionado === "inicial"){
-    km = document.getElementById("kmInicial").value;
-  } else {
-    km = document.getElementById("kmFinal").value;
-  }
+  let km = tipoSelecionado==="inicial"
+    ? document.getElementById("kmInicial").value
+    : document.getElementById("kmFinal").value;
 
   let msg = `🚗 Relatório
 👤 ${motorista}
@@ -324,15 +354,6 @@ function enviar(){
   let url = "https://wa.me/?text=" + encodeURIComponent(msg);
 
   window.open(url, "_blank");
-}
-
-function fecharGanhos(){
-  document.getElementById("telaGanhos").classList.add("hidden");
-}
-
-// sua função original (mantida)
-function enviar(){
-  alert("Enviado!");
 }
 
 </script>
