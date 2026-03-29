@@ -301,25 +301,29 @@ function toggleMenu(){
 }
 
 // abrir ganhos
-function abrirGanhos(){
-  document.getElementById("telaGanhos").classList.remove("hidden");
+function enviar(){
 
-  let nome=document.getElementById("motorista").value;
-  let dados=JSON.parse(localStorage.getItem("ganhos"))||[];
+  let placa = document.getElementById("placa").value;
+  let tipo = document.getElementById("tipo").value;
+  let motorista = document.getElementById("motorista").value;
 
-  let total=0;
-  let html="";
+  let km = "";
 
-  dados.forEach(d=>{
-    if(d.motorista===nome){
-      total+=d.valor;
-      html+=`<div style="margin-bottom:10px;border-bottom:1px solid #333;">
-      📅 ${d.data}<br>🚚 ${d.tipo}<br>💰 R$ ${d.valor}<br>🗓 ${d.quinzena}</div>`;
-    }
-  });
+  if(tipoSelecionado === "inicial"){
+    km = document.getElementById("kmInicial").value;
+  } else {
+    km = document.getElementById("kmFinal").value;
+  }
 
-  document.getElementById("listaGanhos").innerHTML=html;
-  document.getElementById("totalGanhos").innerText="Total: R$ "+total;
+  let msg = `🚗 Relatório
+👤 ${motorista}
+🚚 ${tipo}
+📍 ${placa}
+🔢 KM: ${km}`;
+
+  let url = "https://wa.me/?text=" + encodeURIComponent(msg);
+
+  window.open(url, "_blank");
 }
 
 function fecharGanhos(){
