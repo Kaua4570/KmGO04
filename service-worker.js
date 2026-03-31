@@ -1,7 +1,8 @@
-const CACHE_NAME = "murici-app-v1";
+const CACHE_NAME = "murici-app-v2";
 
 const urlsToCache = [
-  "index.html"
+  "index.html",
+  "dados.txt"
 ];
 
 // Instala
@@ -15,14 +16,19 @@ self.addEventListener("install", event => {
 
 // Ativa
 self.addEventListener("activate", event => {
-  console.log("Service Worker ativo");
+  self.clients.claim();
 });
 
-// Fetch (offline)
+// Fetch inteligente
 self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
+  if (event.request.url.includes("dados.txt")) {
+    // 🔥 SEMPRE pega atualizado
+    event.respondWith(fetch(event.request));
+  } else {
+    event.respondWith(
+      caches.match(event.request).then(response => {
+        return response || fetch(event.request);
+      })
+    );
+  }
 });
