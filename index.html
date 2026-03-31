@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 
-<html class="dark" lang="en"><head> <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff525c">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Murici Logística | M</title>
@@ -298,7 +295,7 @@
     }
 
     // CARREGAR TXT
-    fetch("dados.txt?v=" + Date.now())
+    fetch("dados.txt")
         .then(res => res.text())
         .then(texto => {
             let linhas = texto.split("\n");
@@ -432,13 +429,5 @@
         let mensagem = `🚧RELATÓRIO DE KM\nData: ${dataFormatada}\nMotorista: ${motorista}\nPlaca: ${placa}\nTipo: ${tipo}\n\nKM ${tipoSelecionado.toUpperCase()}\nKm: ${km}`;
         window.open("https://wa.me/?text=" + encodeURIComponent(mensagem), "_blank");
     }
-<script>
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log('PWA rodando 🔥'))
-    .catch(err => console.log('Erro SW:', err));
-}
-</script>
-      
 </script>
 </body></html>
