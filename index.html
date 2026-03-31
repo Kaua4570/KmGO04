@@ -298,7 +298,7 @@
     }
 
     // CARREGAR TXT
-    fetch("dados.txt")
+    fetch("dados.txt?v=" + Date.now())
         .then(res => res.text())
         .then(texto => {
             let linhas = texto.split("\n");
