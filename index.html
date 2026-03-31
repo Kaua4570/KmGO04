@@ -430,4 +430,11 @@
         window.open("https://wa.me/?text=" + encodeURIComponent(mensagem), "_blank");
     }
 </script>
+      <script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('PWA rodando 🔥'))
+    .catch(err => console.log('Erro SW:', err));
+}
+      </script>
 </body></html>
