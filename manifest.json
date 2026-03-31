@@ -1,10 +1,11 @@
 {
-  "name": "KmGO04",
-  "short_name": "KmGO04",
-  "start_url": "./index.html",
+  "name": "Murici Logística",
+  "short_name": "Murici",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#131313",
+  "theme_color": "#ff525c",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
@@ -12,7 +13,7 @@
       "type": "image/png"
     },
     {
-      "src": "icon-192.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
