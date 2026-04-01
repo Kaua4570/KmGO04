@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Murici Logística | M</title>
+<link rel="manifest" href="manifest.json"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface": "#131313",
+          "primary": "#ffb3b2",
+          "error": "#ffb4ab",
+          "on-secondary-fixed": "#410008",
+          "on-surface": "#e5e2e1",
+          "on-primary-container": "#5b000f",
+          "primary-container": "#ff525c",
+          "surface-container-high": "#2a2a2a",
+          "inverse-surface": "#e5e2e1",
+          "inverse-primary": "#bf002a",
+          "tertiary": "#6cd7d8",
+          "on-primary-fixed": "#410008",
+          "on-secondary": "#680012",
+          "secondary-fixed-dim": "#ffb3b2",
+          "secondary-fixed": "#ffdad8",
+          "on-error": "#690005",
+          "surface-bright": "#393939",
+          "surface-container-low": "#1c1b1b",
+          "primary-fixed-dim": "#ffb3b2",
+          "on-primary": "#680012",
+          "primary-fixed": "#ffdad8",
+          "error-container": "#93000a",
+          "on-secondary-container": "#ff9998",
+          "secondary": "#ffb3b2",
+          "on-surface-variant": "#e9bcba",
+          "on-tertiary-container": "#002f30",
+          "tertiary-fixed-dim": "#6cd7d8",
+          "surface-variant": "#353535",
+          "surface-container": "#20201f",
+          "surface-dim": "#131313",
+          "outline-variant": "#5f3e3e",
+          "surface-container-lowest": "#0e0e0e",
+          "on-tertiary": "#003738",
+          "tertiary-fixed": "#8af3f5",
+          "on-background": "#e5e2e1",
+          "surface-tint": "#ffb3b2",
+          "surface-container-highest": "#353535",
+          "background": "#131313",
+          "outline": "#af8786",
+          "tertiary-container": "#2aa0a2",
+          "inverse-on-surface": "#313030",
+          "secondary-container": "#92011e",
+          "on-secondary-fixed-variant": "#92011e",
+          "on-error-container": "#ffdad6",
+          "on-primary-fixed-variant": "#92001e",
+          "on-tertiary-fixed-variant": "#004f51",
+          "on-tertiary-fixed": "#002020"
+        },
+        fontFamily: {
+          "headline": ["Manrope"],
+          "body": ["Inter"],
+          "label": ["Inter"]
+        },
+        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .glass-input {
+    background: rgba(53, 53, 53, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(95, 62, 62, 0.15);
+  }
+  .kinetic-shadow {
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5);
+  }
+  body {
+    min-height: max(884px, 100dvh);
+  }
+  .active-toggle {
+    background-color: #B80000 !important;
+    color: #ffb3b2 !important;
+  }
+  .nav-tab { transition: all 0.2s ease; }
+  .nav-tab.active {
+    color: #ff525c !important;
+    border-bottom: 2px solid #ff525c;
+  }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  @keyframes truck-move {
+    0% { left: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
+  .animate-truck-move {
+    animation: truck-move 6s infinite linear;
+  }
+  .circular-progress {
+    --percent: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, #131313 79%, transparent 80% 100%),
+                conic-gradient(#ffb3b2 calc(var(--percent) * 1%), #2a2a2a 0);
+  }
+  .circular-progress-lg {
+    --percent: 0;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, #1c1b1b 79%, transparent 80% 100%),
+                conic-gradient(#ff525c calc(var(--percent) * 1%), #2a2a2a 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: --percent 0.5s ease;
+  }
+
+  /* Toast notification */
+  #toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Validation shake */
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-6px); }
+    40%,80% { transform: translateX(6px); }
+  }
+  .shake { animation: shake 0.4s ease; }
+
+  /* Route card animation */
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .route-card { animation: slideIn 0.3s ease; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(19,19,19,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(95,62,62,0.2);
+    z-index: 50;
+    display: flex;
+    height: 64px;
+  }
+
+  .error-field {
+    border-color: #ff525c !important;
+    animation: shake 0.4s ease;
+  }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30 min-h-screen pb-20">
+
+<!-- Toast -->
+<div id="toast" class="bg-surface-container-high border border-outline-variant/30 text-on-surface px-5 py-3 rounded-full text-sm font-bold flex items-center gap-2 kinetic-shadow">
+  <span class="material-symbols-outlined text-base" id="toast-icon">check_circle</span>
+  <span id="toast-msg">Enviado!</span>
+</div>
+
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#131313]/60 backdrop-blur-xl flex justify-between items-center px-6 h-16">
+  <div class="flex flex-col justify-center h-full w-full relative">
+    <div class="flex justify-between items-center w-full z-10">
+      <h1 class="text-xl font-black text-[#ff525c] tracking-tighter font-headline uppercase">MURICI</h1>
+      <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center border border-white/5">
+        <span class="material-symbols-outlined text-outline">person</span>
+      </div>
+    </div>
+    <!-- Truck Animation Track -->
+    <div class="absolute bottom-1 left-0 right-0 h-4 opacity-40 pointer-events-none px-6">
+      <div class="flex items-center justify-between h-full w-full">
+        <span class="material-symbols-outlined text-[10px] text-primary">warehouse</span>
+        <div class="flex-1 h-[1px] bg-primary/20 relative mx-1">
+          <span class="material-symbols-outlined text-[10px] text-primary absolute top-1/2 -translate-y-1/2 animate-truck-move">local_shipping</span>
+        </div>
+        <span class="material-symbols-outlined text-[10px] text-primary">warehouse</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== PAGE: REGISTRO ===================== -->
+<main id="page-registro" class="page active pt-24 px-6 max-w-2xl mx-auto">
+  <!-- Hero Section -->
+  <section class="mb-10">
+    <span class="text-primary font-headline font-bold tracking-widest uppercase text-xs mb-2 block">SGO4</span>
+    <h2 class="text-4xl font-headline font-extrabold tracking-tight text-on-surface mb-2">Relatório de km</h2>
+    <p class="text-outline font-body text-sm max-w-md">Provérbios 16:3.</p>
+  </section>
+
+  <div class="space-y-8">
+    <input id="data-interna" type="hidden"/>
+
+    <!-- Toggle: Km Inicial vs Km Final -->
+    <div class="bg-surface-container-low p-1.5 rounded-xl flex items-center gap-1">
+      <button class="flex-1 py-3 px-4 rounded-lg font-headline font-bold text-sm transition-all duration-200 text-outline hover:text-on-surface" id="btn-inicial" onclick="selecionarTipo('inicial')">
+        Km Inicial
+      </button>
+      <button class="flex-1 py-3 px-4 rounded-lg font-headline font-bold text-sm transition-all duration-200 text-outline hover:text-on-surface" id="btn-final" onclick="selecionarTipo('final')">
+        Km Final
+      </button>
+    </div>
+
+    <!-- Form Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Placa -->
+      <div class="space-y-2 group">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-outline ml-1">Fio, Van, Elet</label>
+        <div class="relative">
+          <select class="w-full h-14 glass-input rounded-xl px-4 text-on-surface focus:ring-0 focus:border-primary transition-all appearance-none font-medium" id="placa" onchange="definirVeiculo()">
+            <option value="">Carregando...</option>
+          </select>
+          <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">
+            <span class="material-symbols-outlined">expand_more</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modelo -->
+      <div class="space-y-2">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-outline ml-1">Modelo</label>
+        <input class="w-full h-14 bg-surface-container/50 border border-outline-variant/10 rounded-xl px-4 flex items-center text-on-surface/60 font-medium focus:ring-0 focus:outline-none" id="tipo" placeholder="..." readonly type="text"/>
+      </div>
+
+      <!-- Código -->
+      <div class="space-y-2">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-outline ml-1">Driver</label>
+        <div class="relative">
+          <input class="w-full h-14 glass-input rounded-xl px-4 text-on-surface placeholder:text-outline/30 focus:ring-0 focus:border-primary transition-all font-mono" id="codigo" maxlength="3" placeholder="000" type="tel"/>
+          <div class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-outline uppercase bg-surface-container-highest px-2 py-1 rounded" id="status-motorista">
+            Código
+          </div>
+        </div>
+        <!-- Validação inline -->
+        <p class="text-[10px] text-error ml-1 hidden" id="erro-codigo">Código de motorista inválido.</p>
+      </div>
+
+      <input id="motorista" type="hidden"/>
+
+      <!-- KM -->
+      <div class="space-y-2">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-outline ml-1">Insira o KM</label>
+        <div class="relative">
+          <input class="w-full h-14 glass-input rounded-xl px-4 text-on-surface placeholder:text-outline/30 focus:ring-0 focus:border-primary transition-all font-headline font-extrabold text-lg" id="km-input" placeholder="000.000" type="number"/>
+          <div class="absolute right-4 top-1/2 -translate-y-1/2 text-outline font-bold text-xs uppercase">KM</div>
+        </div>
+        <p class="text-[10px] text-error ml-1 hidden" id="erro-km">Informe o quilometragem.</p>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button class="w-full h-16 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-headline font-extrabold text-lg tracking-widest uppercase flex items-center justify-center gap-3 kinetic-shadow active:scale-[0.98] transition-all group" onclick="enviar()">
+      Confirmar envio
+      <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="mt-12 space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-surface-container-low p-4 rounded-xl border border-white/5 flex flex-col justify-between h-24">
+        <span class="text-[9px] font-bold text-outline uppercase tracking-wider">Ganhos Quinzena</span>
+        <span class="text-2xl font-black text-primary font-headline" id="ganhos-acumulados">R$ 0,00</span>
+      </div>
+      <div class="bg-surface-container-low p-4 rounded-xl border border-white/5 flex items-center justify-between h-24">
+        <div class="flex flex-col">
+          <span class="text-[9px] font-bold text-outline uppercase tracking-wider">Quinzena</span>
+          <span class="text-2xl font-black text-on-surface font-headline" id="progress-text">0%</span>
+        </div>
+        <div class="circular-progress scale-150 mr-2" id="progress-circle" style="--percent: 45;"></div>
+      </div>
+    </div>
+
+    <div class="p-6 rounded-xl border border-outline-variant/10 bg-surface-container-low flex gap-4 items-start">
+      <span class="material-symbols-outlined text-tertiary">info</span>
+      <div>
+        <h5 class="text-sm font-bold text-on-surface mb-1">Protocolo ativo</h5>
+        <p class="text-xs text-outline leading-relaxed">Uma ótima rota ⚡</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ===================== PAGE: QUINZENA ===================== -->
+<main id="page-quinzena" class="page pt-24 px-6 max-w-2xl mx-auto">
+  <!-- Hero -->
+  <section class="mb-8">
+    <span class="text-primary font-headline font-bold tracking-widest uppercase text-xs mb-2 block" id="label-periodo">—</span>
+    <h2 class="text-4xl font-headline font-extrabold tracking-tight text-on-surface mb-1">Minha Quinzena</h2>
+    <p class="text-outline font-body text-sm" id="label-datas">Calculando período...</p>
+  </section>
+
+  <!-- Big Summary Card -->
+  <div class="bg-surface-container-low rounded-2xl border border-outline-variant/10 p-6 mb-6 kinetic-shadow">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <p class="text-[10px] font-bold text-outline uppercase tracking-widest mb-1">Total Acumulado</p>
+        <p class="text-5xl font-black font-headline text-primary" id="q-total-valor">R$ 0,00</p>
+      </div>
+      <div class="circular-progress-lg" id="q-progress-circle" style="--percent: 0;">
+        <span class="text-sm font-black text-on-surface font-headline" id="q-progress-text">0%</span>
+      </div>
+    </div>
+
+    <!-- Vehicle breakdown -->
+    <div class="space-y-3">
+      <!-- Fiorino -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-[#ff525c]/15 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[#ff525c] text-sm">directions_car</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-on-surface">Fiorino</p>
+            <p class="text-[10px] text-outline">R$ 130,00 / rota</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-black font-headline text-on-surface" id="q-fiorino-rotas">0 rotas</p>
+          <p class="text-[10px] text-primary font-bold" id="q-fiorino-valor">R$ 0,00</p>
+        </div>
+      </div>
+
+      <div class="h-px bg-outline-variant/10"></div>
+
+      <!-- Van -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-tertiary/15 flex items-center justify-center">
+            <span class="material-symbols-outlined text-tertiary text-sm">airport_shuttle</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-on-surface">Van Diesel</p>
+            <p class="text-[10px] text-outline">R$ 170,00 / rota</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-black font-headline text-on-surface" id="q-van-rotas">0 rotas</p>
+          <p class="text-[10px] text-primary font-bold" id="q-van-valor">R$ 0,00</p>
+        </div>
+      </div>
+
+      <div class="h-px bg-outline-variant/10"></div>
+
+      <!-- Elétrico -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-[#6cd7d8]/15 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[#6cd7d8] text-sm">electric_car</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-on-surface">Elétrico</p>
+            <p class="text-[10px] text-outline">R$ 190,00 / rota</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-black font-headline text-on-surface" id="q-elet-rotas">0 rotas</p>
+          <p class="text-[10px] text-primary font-bold" id="q-elet-valor">R$ 0,00</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total de Rotas -->
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="bg-surface-container-low p-4 rounded-xl border border-white/5">
+      <p class="text-[9px] font-bold text-outline uppercase tracking-wider mb-1">Total de Rotas</p>
+      <p class="text-3xl font-black font-headline text-on-surface" id="q-total-rotas">0</p>
+    </div>
+    <div class="bg-surface-container-low p-4 rounded-xl border border-white/5">
+      <p class="text-[9px] font-bold text-outline uppercase tracking-wider mb-1">Dias Restantes</p>
+      <p class="text-3xl font-black font-headline text-on-surface" id="q-dias-restantes">—</p>
+    </div>
+  </div>
+
+  <!-- Histórico de rotas -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-xs font-bold uppercase tracking-widest text-outline">Histórico da Quinzena</h3>
+      <button onclick="limparHistorico()" class="text-[10px] text-error/60 hover:text-error font-bold uppercase tracking-wider transition-colors">Limpar</button>
+    </div>
+    <div id="historico-lista" class="space-y-2">
+      <p class="text-sm text-outline text-center py-8" id="historico-vazio">Nenhuma rota registrada ainda.</p>
+    </div>
+  </div>
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button class="nav-tab active flex-1 flex flex-col items-center justify-center gap-1 text-outline" id="tab-registro" onclick="trocarPagina('registro')">
+    <span class="material-symbols-outlined text-xl">edit_note</span>
+    <span class="text-[10px] font-bold uppercase tracking-wider">Registro</span>
+  </button>
+  <button class="nav-tab flex-1 flex flex-col items-center justify-center gap-1 text-outline" id="tab-quinzena" onclick="trocarPagina('quinzena')">
+    <span class="material-symbols-outlined text-xl">bar_chart</span>
+    <span class="text-[10px] font-bold uppercase tracking-wider">Quinzena</span>
+  </button>
+</nav>
+
+<script>
+  // ===== STATE =====
+  let tipoSelecionado = "";
+  let listaCodigos = {};
+
+  const VALORES_VEICULO = {
+    "Fiorino": 130,
+    "Van Disel": 170,
+    "van Disel": 170,
+    "Van Diesel": 170,
+    "Eletrico": 190,
+    "Elétrico": 190,
+  };
+
+  // ===== QUINZENA LOGIC =====
+  function getQuinzena(data) {
+    const d = data || new Date();
+    const dia = d.getDate();
+    const mes = d.getMonth();
+    const ano = d.getFullYear();
+
+    let inicio, fim;
+
+    if (dia >= 15) {
+      // 15 até penúltimo dia do mês
+      inicio = new Date(ano, mes, 15);
+      const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+      fim = new Date(ano, mes, ultimoDia - 1); // penúltimo
+    } else {
+      // último dia do mês anterior até dia 14
+      const ultimoMesAnterior = new Date(ano, mes, 0); // último dia do mês anterior
+      inicio = ultimoMesAnterior;
+      fim = new Date(ano, mes, 14);
+    }
+
+    return { inicio, fim };
+  }
+
+  function chaveQuinzena(data) {
+    const d = data || new Date();
+    const { inicio } = getQuinzena(d);
+    return `quinzena_${inicio.getFullYear()}_${inicio.getMonth()}_${inicio.getDate()}`;
+  }
+
+  function getDadosQuinzena() {
+    const chave = chaveQuinzena();
+    const raw = localStorage.getItem(chave);
+    if (raw) return JSON.parse(raw);
+    return { rotas: [], totalValor: 0, fiorino: 0, van: 0, eletrico: 0 };
+  }
+
+  function salvarDadosQuinzena(dados) {
+    localStorage.setItem(chaveQuinzena(), JSON.stringify(dados));
+  }
+
+  function adicionarRota(veiculo, placa, motorista) {
+    const dados = getDadosQuinzena();
+    const valor = VALORES_VEICULO[veiculo] || 0;
+    const veiculoNorm = normalizarVeiculo(veiculo);
+
+    dados.totalValor += valor;
+    dados.rotas.push({
+      data: new Date().toISOString(),
+      veiculo: veiculo,
+      veiculoNorm,
+      placa,
+      motorista,
+      valor
+    });
+
+    if (veiculoNorm === 'fiorino') dados.fiorino = (dados.fiorino || 0) + 1;
+    else if (veiculoNorm === 'van') dados.van = (dados.van || 0) + 1;
+    else if (veiculoNorm === 'eletrico') dados.eletrico = (dados.eletrico || 0) + 1;
+
+    salvarDadosQuinzena(dados);
+    renderizarQuinzena();
+  }
+
+  function normalizarVeiculo(v) {
+    const s = v.toLowerCase().trim();
+    if (s.includes('fior')) return 'fiorino';
+    if (s.includes('van') || s.includes('dies')) return 'van';
+    if (s.includes('elet')) return 'eletrico';
+    return 'outro';
+  }
+
+  function renderizarQuinzena() {
+    const dados = getDadosQuinzena();
+    const { inicio, fim } = getQuinzena();
+    const agora = new Date();
+
+    // Header labels
+    const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const inicioStr = `${String(inicio.getDate()).padStart(2,'0')} ${meses[inicio.getMonth()]}`;
+    const fimStr = `${String(fim.getDate()).padStart(2,'0')} ${meses[fim.getMonth()]}`;
+    document.getElementById('label-periodo').textContent = inicio.getDate() === 15 ? '2ª Quinzena' : '1ª Quinzena';
+    document.getElementById('label-datas').textContent = `${inicioStr} → ${fimStr}`;
+
+    // Progress
+    const totalMs = fim - inicio;
+    const passadoMs = agora - inicio;
+    const pct = Math.max(0, Math.min(100, Math.round((passadoMs / totalMs) * 100)));
+    document.getElementById('q-progress-circle').style.setProperty('--percent', pct);
+    document.getElementById('q-progress-text').textContent = pct + '%';
+
+    // Dias restantes
+    const msRestante = fim - agora;
+    const diasRestantes = Math.max(0, Math.ceil(msRestante / (1000 * 60 * 60 * 24)));
+    document.getElementById('q-dias-restantes').textContent = diasRestantes;
+
+    // Valores
+    const fiorino = dados.fiorino || 0;
+    const van = dados.van || 0;
+    const eletrico = dados.eletrico || 0;
+    const totalRotas = dados.rotas ? dados.rotas.length : 0;
+
+    document.getElementById('q-total-valor').textContent = `R$ ${(dados.totalValor || 0).toFixed(2).replace('.', ',')}`;
+    document.getElementById('q-total-rotas').textContent = totalRotas;
+
+    document.getElementById('q-fiorino-rotas').textContent = fiorino + (fiorino === 1 ? ' rota' : ' rotas');
+    document.getElementById('q-fiorino-valor').textContent = `R$ ${(fiorino * 130).toFixed(2).replace('.', ',')}`;
+
+    document.getElementById('q-van-rotas').textContent = van + (van === 1 ? ' rota' : ' rotas');
+    document.getElementById('q-van-valor').textContent = `R$ ${(van * 170).toFixed(2).replace('.', ',')}`;
+
+    document.getElementById('q-elet-rotas').textContent = eletrico + (eletrico === 1 ? ' rota' : ' rotas');
+    document.getElementById('q-elet-valor').textContent = `R$ ${(eletrico * 190).toFixed(2).replace('.', ',')}`;
+
+    // Header ganhos
+    document.getElementById('ganhos-acumulados').textContent = `R$ ${(dados.totalValor || 0).toFixed(2).replace('.', ',')}`;
+
+    // Histórico
+    const lista = document.getElementById('historico-lista');
+    const vazio = document.getElementById('historico-vazio');
+
+    if (!dados.rotas || dados.rotas.length === 0) {
+      vazio.style.display = 'block';
+      lista.querySelectorAll('.route-card').forEach(e => e.remove());
+      return;
+    }
+
+    vazio.style.display = 'none';
+    lista.querySelectorAll('.route-card').forEach(e => e.remove());
+
+    // Mostrar do mais recente
+    const rotasOrd = [...dados.rotas].reverse();
+    rotasOrd.forEach((rota, i) => {
+      const dt = new Date(rota.data);
+      const dStr = `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`;
+      const icon = rota.veiculoNorm === 'fiorino' ? 'directions_car' : rota.veiculoNorm === 'van' ? 'airport_shuttle' : 'electric_car';
+      const cor = rota.veiculoNorm === 'fiorino' ? '#ff525c' : rota.veiculoNorm === 'van' ? '#6cd7d8' : '#6cd7d8';
+
+      const card = document.createElement('div');
+      card.className = 'route-card bg-surface-container-low rounded-xl border border-white/5 p-4 flex items-center justify-between';
+      card.innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:${cor}18">
+            <span class="material-symbols-outlined text-sm" style="color:${cor}">${icon}</span>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-on-surface">${rota.placa}</p>
+            <p class="text-[10px] text-outline">${rota.motorista} · ${dStr}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-black font-headline text-primary">+R$ ${rota.valor.toFixed(2).replace('.', ',')}</p>
+          <p class="text-[10px] text-outline uppercase">${rota.veiculo}</p>
+        </div>
+      `;
+      lista.appendChild(card);
+    });
+  }
+
+  function limparHistorico() {
+    if (!confirm('Limpar todas as rotas desta quinzena?')) return;
+    localStorage.removeItem(chaveQuinzena());
+    renderizarQuinzena();
+    showToast('Histórico limpo', 'delete');
+  }
+
+  // ===== UI HELPERS =====
+  function showToast(msg, icon = 'check_circle', isError = false) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    document.getElementById('toast-icon').textContent = icon;
+    document.getElementById('toast-icon').style.color = isError ? '#ff525c' : '#6cd7d8';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function trocarPagina(nome) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('page-' + nome).classList.add('active');
+    document.getElementById('tab-' + nome).classList.add('active');
+    if (nome === 'quinzena') renderizarQuinzena();
+  }
+
+  // ===== LOAD TXT =====
+  fetch("dados.txt")
+    .then(res => res.text())
+    .then(texto => {
+      let linhas = texto.split("\n");
+      let select = document.getElementById("placa");
+      select.innerHTML = '<option value="">Selecionar Placa</option>';
+      linhas.forEach(linha => {
+        linha = linha.trim();
+        if (!linha || linha.startsWith("#")) return;
+        if (linha.includes("=")) {
+          let [codigo, nome] = linha.split("=");
+          listaCodigos[codigo.trim()] = nome.trim();
+        }
+        if (linha.includes("|")) {
+          let [placa, tipo] = linha.split("|");
+          let option = document.createElement("option");
+          option.value = placa.trim() + "|" + tipo.trim();
+          option.textContent = placa.trim();
+          select.appendChild(option);
+        }
+      });
+    })
+    .catch(() => {
+      document.getElementById("placa").innerHTML = '<option value="">Erro ao carregar</option>';
+    });
+
+  // ===== MOTORISTA AUTO-FILL =====
+  document.getElementById("codigo").addEventListener("input", function () {
+    let cod = this.value.trim();
+    let nome = listaCodigos[cod];
+    let statusDiv = document.getElementById("status-motorista");
+    let motoristaInput = document.getElementById("motorista");
+    const erroEl = document.getElementById('erro-codigo');
+
+    if (nome) {
+      motoristaInput.value = nome;
+      statusDiv.textContent = "✓ " + nome;
+      statusDiv.classList.remove("text-outline", "bg-surface-container-highest");
+      statusDiv.classList.add("text-tertiary", "bg-tertiary/10");
+      erroEl.classList.add('hidden');
+    } else {
+      motoristaInput.value = "";
+      statusDiv.textContent = "Aguardando";
+      statusDiv.classList.add("text-outline", "bg-surface-container-highest");
+      statusDiv.classList.remove("text-tertiary", "bg-tertiary/10");
+    }
+  });
+
+  // ===== VEÍCULO =====
+  function definirVeiculo() {
+    let valor = document.getElementById("placa").value;
+    let tipoInput = document.getElementById("tipo");
+    if (!valor) { tipoInput.value = ""; return; }
+    tipoInput.value = valor.split("|")[1];
+  }
+
+  // ===== BOTÕES =====
+  function selecionarTipo(tipo) {
+    tipoSelecionado = tipo;
+    const btnI = document.getElementById("btn-inicial");
+    const btnF = document.getElementById("btn-final");
+    btnI.classList.remove("active-toggle");
+    btnF.classList.remove("active-toggle");
+    if (tipo === "inicial") btnI.classList.add("active-toggle");
+    else btnF.classList.add("active-toggle");
+  }
+
+  // ===== PROGRESS =====
+  function updateFortnightProgress() {
+    const { inicio, fim } = getQuinzena();
+    const agora = new Date();
+    const total = fim - inicio;
+    const current = agora - inicio;
+    let percent = Math.max(0, Math.min(100, Math.round((current / total) * 100)));
+    const circle = document.getElementById('progress-circle');
+    const text = document.getElementById('progress-text');
+    if (circle) circle.style.setProperty('--percent', percent);
+    if (text) text.textContent = percent + '%';
+  }
+
+  // ===== ENVIO =====
+  function enviar() {
+    let placaValor = document.getElementById("placa").value;
+    let motorista = document.getElementById("motorista").value.trim();
+    let codigo = document.getElementById("codigo").value.trim();
+    let data = document.getElementById("data-interna").value;
+    let tipo = document.getElementById("tipo").value;
+    let km = document.getElementById("km-input").value;
+
+    let valido = true;
+
+    if (!placaValor || !motorista || !listaCodigos[codigo]) {
+      const codigoEl = document.getElementById('codigo');
+      const erroEl = document.getElementById('erro-codigo');
+      codigoEl.classList.add('error-field');
+      erroEl.classList.remove('hidden');
+      setTimeout(() => codigoEl.classList.remove('error-field'), 500);
+      valido = false;
+    } else {
+      document.getElementById('erro-codigo').classList.add('hidden');
+    }
+
+    if (!km) {
+      const kmEl = document.getElementById('km-input');
+      const erroEl = document.getElementById('erro-km');
+      kmEl.classList.add('error-field');
+      erroEl.classList.remove('hidden');
+      setTimeout(() => kmEl.classList.remove('error-field'), 500);
+      valido = false;
+    } else {
+      document.getElementById('erro-km').classList.add('hidden');
+    }
+
+    if (!valido) {
+      showToast('Preencha os campos obrigatórios', 'error', true);
+      return;
+    }
+
+    // Somar na quinzena se for Km Inicial
+    if (tipoSelecionado === "inicial") {
+      let placa = placaValor.split("|")[0];
+      adicionarRota(tipo, placa, motorista);
+    }
+
+    let placa = placaValor.split("|")[0];
+    let partes = data.split("-");
+    let dataFormatada = partes[2] + "/" + partes[1] + "/" + partes[0];
+
+    let formURL = "https://docs.google.com/forms/d/e/1FAIpQLSeix5MZnyLhcfKGGPZ9tDorq0it3lHgCtqWjStNQk8P7T-L3g/formResponse?";
+    formURL += "entry.539990906=" + data;
+    formURL += "&entry.1842617813=" + encodeURIComponent(motorista);
+    formURL += "&entry.1659496168=" + placa;
+    formURL += "&entry.246432408=" + tipo;
+    formURL += "&entry.911419409=" + km;
+    formURL += "&entry.1663942632=" + (tipoSelecionado === "inicial" ? "Inicial" : "Final");
+
+    fetch(formURL, { method: "POST", mode: "no-cors" });
+
+    let mensagem = `🚧RELATÓRIO DE KM\nData: ${dataFormatada}\nMotorista: ${motorista}\nPlaca: ${placa}\nTipo: ${tipo}\n\nKM ${tipoSelecionado.toUpperCase()}\nKm: ${km}`;
+    window.open("https://wa.me/?text=" + encodeURIComponent(mensagem), "_blank");
+
+    showToast(tipoSelecionado === 'inicial' ? 'Rota iniciada! 🚛' : 'Km final registrado!', 'check_circle');
+
+    // Limpar km
+    document.getElementById('km-input').value = '';
+  }
+
+  // ===== INIT =====
+  window.onload = function () {
+    let hoje = new Date();
+    let ano = hoje.getFullYear();
+    let mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    let dia = String(hoje.getDate()).padStart(2, '0');
+    document.getElementById("data-interna").value = `${ano}-${mes}-${dia}`;
+    updateFortnightProgress();
+    selecionarTipo('inicial');
+    renderizarQuinzena();
+  };
+</script>
+</body>
+</html>
